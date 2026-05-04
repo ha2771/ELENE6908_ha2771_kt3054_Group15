@@ -1,0 +1,2 @@
+bert/weights/*.onnx
+gpt/weights/*.pt
