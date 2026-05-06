@@ -126,6 +126,66 @@ The threshold is calibrated on the validation set by maximising `early_exit_rate
 
 ---
 
+## Results
+Both transformer models were first trained and evaluated in Google Colab. The trained model files were then downloaded and loaded onto the Raspberry Pi 5, where the final edge-device benchmarks were performed. On the Raspberry Pi 5, each model was evaluated using single-sample CPU inference across five inference settings: FP32 baseline, INT8 quantization, ONNX Runtime, structured pruning, and confidence-based early exit.
+### Raspberry Pi 5 Benchmark: DistilBERT and GPT-2
+
+The models were benchmarked on Raspberry Pi 5 using single-sample CPU inference.  
+Five inference settings were evaluated: FP32 baseline, INT8 quantization, ONNX Runtime, structured pruning, and confidence-based early exit.
+
+---
+
+### DistilBERT — Raspberry Pi 5 Benchmark
+
+| Stage | Accuracy | Latency (ms) | Speedup vs FP32 | Energy |
+|---|---:|---:|---:|---:|
+| 1 — FP32 Baseline | 90% | 214.7 | 1.00× | 7 mWh |
+| 2 — INT8 PTQ | 85% | 274.2 | 0.78× | 7 mWh |
+| 3 — ONNX Runtime | 80% | 169.9 | 1.26× | 7 mWh |
+| 4 — Structured Pruning | 85% | 218.4 | 0.98× | 7 mWh |
+| 5 — Early Exit | 80% | 109.3 | **1.96×** | 7 mWh |
+
+**Key findings:**
+- Early exit achieved the fastest DistilBERT inference time at **109.3 ms**, giving a **1.96× speedup** over the FP32 baseline.
+- The FP32 baseline achieved the highest DistilBERT accuracy at **90%**.
+- Early exit reduced latency significantly, but accuracy dropped from **90% to 80%**, showing a trade-off between speed and classification performance.
+- ONNX Runtime improved latency to **169.9 ms**, but also reduced accuracy to **80%**.
+- INT8 quantization and structured pruning did not improve latency on Raspberry Pi 5 in this setup.
+- Energy usage stayed constant at **7 mWh** across all DistilBERT variants.
+
+---
+
+### GPT-2 / DistilGPT-2 — Raspberry Pi 5 Benchmark
+
+| Stage | Accuracy | Latency (ms) | Speedup vs FP32 | Energy |
+|---|---:|---:|---:|---:|
+| 1 — FP32 Baseline | 100% | 228.5 | 1.00× | 6 mWh |
+| 2 — INT8 PTQ | 100% | 229.8 | 0.99× | 8 mWh |
+| 3 — ONNX Runtime | 100% | 155.4 | 1.47× | 7 mWh |
+| 4 — Structured Pruning | 100% | 237.8 | 0.96× | 8 mWh |
+| 5 — Early Exit | 100% | 122.1 | **1.87×** | 9 mWh |
+
+**Key findings:**
+- GPT-2 maintained **100% accuracy across all inference variants**, making it more robust than DistilBERT in this experiment.
+- Early exit achieved the best GPT-2 latency at **122.1 ms**, giving a **1.87× speedup** with no accuracy loss.
+- ONNX Runtime also improved inference speed, reducing latency to **155.4 ms** with a **1.47× speedup**.
+- INT8 quantization and structured pruning did not improve GPT-2 latency on Raspberry Pi 5.
+- The FP32 GPT-2 baseline had the lowest measured energy usage at **6 mWh**, while early exit used **9 mWh**.
+- Overall, GPT-2 with early exit provided the best accuracy-latency trade-off.
+
+---
+
+### Overall Findings
+
+- **GPT-2 was the stronger overall model**, maintaining 100% accuracy across all optimization methods.
+- **Early exit was the most effective latency-reduction method** for both models.
+- DistilBERT achieved the highest speedup with early exit, but this came with a noticeable accuracy drop.
+- GPT-2 early exit delivered a strong speedup while preserving full accuracy, making it the best balanced deployment option.
+- ONNX Runtime was also effective, especially for GPT-2, where it improved latency without reducing accuracy.
+- INT8 quantization and structured pruning did not consistently improve performance on Raspberry Pi 5, likely due to CPU execution overhead and hardware-specific runtime behavior.
+- These results show that transformer-based VOC gas classification can run on low-power edge hardware, but the best optimization strategy depends strongly on model architecture and deployment conditions.
+
+
 ## Raspberry Pi 5 Deployment
 
 ### Hardware
