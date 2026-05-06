@@ -109,13 +109,6 @@ The threshold is calibrated on the validation set by maximising `early_exit_rate
 
 Both transformer models were first trained and evaluated in Google Colab. After training, the model files were downloaded and loaded onto the Raspberry Pi 5, where the final edge-device benchmarks were performed. On the Raspberry Pi 5, each model was evaluated using single-sample CPU inference across five inference settings: FP32 baseline, INT8 quantization, ONNX Runtime, structured pruning, and confidence-based early exit.
 
----
-
-### Raspberry Pi 5 Benchmark: DistilBERT and GPT-2
-
-The benchmark compares mean latency, classification accuracy, energy usage, and speedup relative to the FP32 baseline.
-
----
 
 ### DistilBERT — Raspberry Pi 5 Benchmark
 
@@ -136,7 +129,7 @@ The benchmark compares mean latency, classification accuracy, energy usage, and 
 - Structured pruning produced almost the same latency as the FP32 baseline, with a small accuracy drop from **90% to 85%**.
 - DistilBERT energy usage ranged from **2 mWh to 5 mWh**, with early exit using the least energy.
 
----
+
 
 ### GPT-2 / DistilGPT-2 — Raspberry Pi 5 Benchmark
 
